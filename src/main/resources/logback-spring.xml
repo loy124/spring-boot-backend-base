@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 15초마다 설정 파일의 변경을 확인 하여 변경시 갱신하려면 configuration scan="true" scanPeriod="15 seconds" -->
+<configuration >
+    <!-- application.yml 파일에서 spring.profiles.active 가져오기 -->
+    <springProperty name="profile" source="spring.profiles.active" defaultValue="local"/>
+
+    <!-- profile 별 로그 설정 -->
+    <property resource="logback-${profile}.properties"/>
+
+
+    <!-- log file path -->
+    <timestamp key="BY_DATE" datePattern="yyyyMMdd"/>
+    <timestamp key="BY_MONTH" datePattern="yyyyMM"/>
+    <timestamp key="BY_TIME" datePattern="HH"/>
+    <property name="LOG_PATH" value="${log.config.path}"/>
+    <!-- log file name -->
+    <property name="LOG_FILE_NAME" value="${log.config.filename}"/>
+    <!-- err log file name -->
+    <property name="ERR_LOG_FILE_NAME" value="${error.log.config.filename}"/>
+    <!-- log level filter -->
+    <property name="LOG_LEVEL" value="${log.config.level}"/>
+    <!-- log pattern -->
+    <property name="LOG_PATTERN" value="%-5level %d{yy-MM-dd HH:mm:ss} [%thread] [%logger{0}-%M:%line] - %msg%n "/>
+    <property name="LOG_DETAIL_PATTERN" value="%-5level %d{yy-MM-dd HH:mm:ss.SSS} [%thread] [%logger{0}-%M:%line] - %msg%n"/>
+
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- API_LOG File Appender -->
+    <appender name="API_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${BY_MONTH}/${BY_MONTH}_api_${LOG_FILE_NAME}.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${LOG_LEVEL}</level>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_DETAIL_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/%d{yyyyMM}/%d{yyyyMM}_api_${LOG_FILE_NAME}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>100</maxHistory>
+            <MinIndex>1</MinIndex> <MaxIndex>10</MaxIndex>
+        </rollingPolicy>
+    </appender>
+
+    <!-- File Appender -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 파일경로 설정 -->
+        <file>${LOG_PATH}/${BY_MONTH}/${BY_MONTH}_${LOG_FILE_NAME}.log</file>
+
+        <!-- 지정한 로그 레벨보다 같거나 높은 수준의 로그 레벨에 대해서는 로그를 처리. 지정한 로그 레벨보다 낮은 수준의 로그는 거부 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${LOG_LEVEL}</level>
+        </filter>
+
+        <!-- 출력패턴 설정-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+        <append>true</append>
+        <!-- Rolling 정책 (파일 관리설정) -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
+            <fileNamePattern>${LOG_PATH}/%d{yyyyMM}/%d{yyyyMM}_${LOG_FILE_NAME}_%i.log</fileNamePattern>
+
+            <!--    파일 크기 지정할떄 사용 -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 파일당 최고 용량 kb, mb, gb -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+
+<!--             일자별 로그파일 최대 보관주기(~일), 해당 설정일 이상된 파일은 자동으로 제거-->
+            <maxHistory>100</maxHistory>
+            <MinIndex>1</MinIndex> <MaxIndex>10</MaxIndex>
+
+        </rollingPolicy>
+    </appender>
+
+    <!-- 각 API_LOG logger 설정 -->
+    <logger name="API_LOG" level="INFO" additivity="false">
+        <appender-ref ref="API_FILE" />
+    </logger>
+
+
+
+    <root>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+
+</configuration>

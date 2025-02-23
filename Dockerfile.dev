@@ -1,0 +1,20 @@
+FROM openjdk:17-alpine
+
+WORKDIR /app
+
+ENV TZ Asia/Seoul
+
+ARG JAR_PATH=./build/libs
+
+COPY ${JAR_PATH}/mincourse.jar ${JAR_PATH}/mincourse.jar
+
+# 포트 노출
+EXPOSE 8080
+#./data/pinpoint-agent-3.0.0/pinpoint-bootstrap-3.0.0.jar
+
+
+
+# 애플리케이션 실행
+#CMD ["java", "-jar","-Dspring.profiles.active=dev", "./build/libs/mincourse.jar"]
+
+CMD ["java", "-javaagent:./data/pinpoint-agent-3.0.0/pinpoint-bootstrap-3.0.0.jar", "-Dpinpoint.agentId=mincourse_dev", "-Dpinpoint.applicationName=mincourse_dev", "-Dpinpoint.config=./data/pinpoint-agent-3.0.0/pinpoint-root.config", "-jar", "-Dspring.profiles.active=dev", "./build/libs/mincourse.jar"]

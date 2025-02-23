@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+
+<label>
+    <input type="text" id="email">
+</label>
+<label>
+    <input type="password" id="password">
+</label>
+
+<button id="button">로그인</button>
+
+<button id="logout-button">로그아웃</button>
+
+<button id="silent-refresh">로그인 갱신</button>
+
+<button id ="post-button">도메인 생성 </button>
+
+<input id="post-file" type="file"> 파일 업로드
+
+<input id="domain-name" type="text"> 도메인 이름
+
+<script>
+    const email = document.querySelector('#email');
+    const password = document.querySelector('#password');
+    const button = document.querySelector('#button');
+    const logoutButton = document.querySelector('#logout-button');
+    const silentRefresh = document.querySelector('#silent-refresh');
+    const domainButton = document.querySelector("#post-button");
+    const domainName = document.querySelector("#domain-name");
+
+    const postFile = document.querySelector("#post-file");
+
+    axios.defaults.withCredentials = true;
+
+    button.addEventListener('click', function (){
+
+        axios.post('http://localhost:8080/api/member/login/v1',{
+            email: email.value,
+            password: password.value
+        }, {
+            
+        }).then(li => {
+            console.log(li);
+            axios.defaults.headers.common['Authorization'] = li.headers.authorization
+            // console.log(li.headers.authorization);
+            console.log(li);
+        }).catch(error => {
+            console.log(error);
+        })
+
+    })
+
+
+
+
+
+    logoutButton.addEventListener('click', function (){
+
+        axios.post('http://localhost:8080/api/member/logout/v1').then(li => {
+
+            
+        }).catch(error => {
+            console.log(error);
+        })
+
+    })
+    document.cookie = 
+    //"min-token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QudGVzdCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcwMzU2NjIxOSwiZXhwIjoxNzA0Nzc1ODE5fQ.lyG1_hp7oTx7jRYpLaDT8UWKXS9wIhenubM6ckhrtWw;"
+    "min-token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZW1haWwiOiJvbnlvdS5sZWVAbWluY29kaW5nLmNvLmtyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzAzNTY2NjY4LCJleHAiOjE3MDQ3NzYyNjh9.xOxXaJdn4YW4vp46Mn3rVHAK8B1VORL5QQXwsthT3a0;"
+
+    silentRefresh.addEventListener('click', function (){
+        document.cookie = 
+        "min-token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QudGVzdCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcwMzU2NjIxOSwiZXhwIjoxNzA0Nzc1ODE5fQ.lyG1_hp7oTx7jRYpLaDT8UWKXS9wIhenubM6ckhrtWw;"
+        //const cookie = new Cookie('min-token', "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZW1haWwiOiJvbnlvdS5sZWVAbWluY29kaW5nLmNvLmtyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzAzNTYwMzYxLCJleHAiOjE3MDQ3Njk5NjF9.efCnN54DUvJcPUqHGrFgNb4HlogiR-z324fEo7l3WWs");
+        axios.post('http://localhost:8080/api/member/silent-refresh/v1', {
+            withCredentials: true,
+            headers:{
+                'Cookie' : document.cookie
+            }
+        }).then(li => {
+            console.log(li);
+        }).catch(error => {
+            console.log(error);
+        })
+
+    })
+
+
+
+
+    const data = {
+        "name": "Sapl1e11111",
+        "rollingMessage": "Sample Rolling Message",
+        "signupAuth": "PENDING_EMPLOYEE",
+        "isLectureAutoApply": true,
+        "isEmailAutoApply": false,
+        "isCompletionTestActive": true,
+        "isTrainingProblemProgressActive": false
+
+    }
+
+
+
+    let formData = new FormData();
+
+    postFile.addEventListener('change', function(e){
+        console.log(e.target.files[0]);
+        formData.append("image", e.target.files[0])
+
+    })
+
+
+
+
+</script>
+</body>
+</html>

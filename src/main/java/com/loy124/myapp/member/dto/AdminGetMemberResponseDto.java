@@ -1,0 +1,44 @@
+package com.loy124.myapp.member.dto;
+
+import com.loy124.myapp.core.util.common.Role;
+import com.loy124.myapp.member.entity.Member;
+import lombok.Value;
+
+import java.time.LocalDateTime;
+
+/**
+ * DTO for {@link Member}
+ */
+@Value
+public class AdminGetMemberResponseDto {
+    LocalDateTime createdDate;
+    LocalDateTime lastModifiedDate;
+    Long id;
+    String email;
+    String name;
+    Integer employeeNumber;
+    String affiliatedCode;
+    Role role;
+    String language;
+    String goal;
+    String phoneNumber;
+    LocalDateTime lastLogin;
+
+    public AdminGetMemberResponseDto(Member member) {
+        this.createdDate = member.getCreatedDate();
+        this.lastModifiedDate = member.getLastModifiedDate();
+        this.id = member.getId();
+        this.email = member.getEmail();
+        this.name = member.getName();
+        this.employeeNumber = member.getEmployeeNumber();
+        this.affiliatedCode = member.getAffiliatedCode();
+        this.role = member.getRole();
+        this.language = member.getLanguage();
+        this.goal = member.getGoal();
+        this.phoneNumber = member.getPhoneNumber();
+        this.lastLogin = member.getLastLogin();
+
+
+
+    }
+}
